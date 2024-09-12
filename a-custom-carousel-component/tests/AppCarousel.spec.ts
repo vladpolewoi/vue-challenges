@@ -24,13 +24,32 @@ beforeEach(() => {
 });
 
 describe("the Carousel component", () => {
-  test.todo(
-    "rotates through the images provided via the urls prop",
-    async () => {},
-  );
+  test("rotates through the images provided via the urls prop", async () => {
+    // first image displays first
+    let img = wrapper.find('[data-test="active-img"]');
+    expect(img.attributes("src")).toBe(urls.at(0));
 
-  test.todo(
-    "uses the duration prop to change the time between images",
-    async () => {},
-  );
+    // and second
+    vi.advanceTimersByTime(1000);
+    // next tick to refresh render
+    await nextTick();
+    img = wrapper.find('[data-test="active-img"]');
+    expect(img.attributes("src")).toBe(urls.at(1));
+  });
+
+  test("uses the duration prop to change the time between images", async () => {
+    const wrapper = mount(AppCarousel, {
+      props: {
+        urls,
+        duration: 200,
+      },
+    });
+
+    for (const url of urls) {
+      const img = wrapper.find('[data-test="active-img"]');
+      expect(img.attributes("src")).toBe(url);
+      vi.advanceTimersByTime(200);
+      await nextTick();
+    }
+  });
 });
